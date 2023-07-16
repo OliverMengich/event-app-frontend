@@ -18,7 +18,7 @@ function EventItemComponent({handleNavigation,date, ...otherProps}) {
                 <Image
                     style={{height: 150, width: '100%',borderTopLeftRadius: 10, borderTopRightRadius: 10}}
                     source={{
-                        uri: 'https://picsum.photos/200/300',
+                        uri: image,
                     }}
                 />
                 <View style={{position: 'absolute', top: 5, right: 5}}>
@@ -34,6 +34,7 @@ function EventItemComponent({handleNavigation,date, ...otherProps}) {
                     <Icon size={20} name="map-marker-outline" />
                     <Text style={styles.normalText}>{location}</Text>
                 </View>
+                <Text style={styles.normalText}>{description.slice(0,22)}...</Text>
                 <View style={styles.row}>
                     <Text >Price: {price}</Text>
                     <Pressable android_ripple={{color:'#f5f5f5'}}  style={styles.butttonStyle}>
@@ -57,7 +58,7 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         // width: '50%',
         // padding: 10,
-        marginHorizontal: 10
+        marginHorizontal: 5
     },
     boldText:{
         fontWeight: 'bold',
@@ -70,10 +71,10 @@ const styles = StyleSheet.create({
         color: '#262739'
     },
     butttonStyle:{
-        backgroundColor: '#262739',
-        borderRadius: 7,
-        paddingVertical: 2,
-        paddingHorizontal: 10,
+        backgroundColor: '#4285f4',
+        borderRadius: 15,
+        paddingVertical: 5,
+        paddingHorizontal: 20,
     },
     addButton:{position: 'absolute', bottom: 30, right: 20, backgroundColor: 'red', borderRadius: 50, padding: 10},
     eventsSection:{
