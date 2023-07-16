@@ -1,12 +1,16 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Pressable, ScrollView } from 'react-native';
+import { StyleSheet, Text, View,Image, TextInput, Pressable, ScrollView } from 'react-native';
 import Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import SpeakerComponent from '../components/Speaker.component';
+import EventItemComponent from '../components/EventItem.component';
 const monthNames = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
 const date = new Date();
-export default function HomeScreen(props) {
+export default function HomeScreen({navigation}) {
+    function handleNavigation(){
+        navigation.navigate('EventDetails')
+    }
     return (
         <View style={styles.container}>
             <View style={{marginTop: 60}}>
@@ -53,57 +57,24 @@ export default function HomeScreen(props) {
                     <Text style={{color:'#4285f4'}}>Show all</Text>
                 </View>
                 <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                    <Pressable style={{borderWidth: 1,marginHorizontal: 5, borderColor: '#4285f4', paddingVertical: 5,borderRadius: 15, paddingHorizontal: 25}}>
-                        <Text style={{color: '#fff'}}>All</Text>
-                    </Pressable>
-                    <Pressable style={{borderWidth: 1,marginHorizontal: 5, backgroundColor: '#4285f4', borderColor: '#4285f4', paddingVertical: 5,borderRadius: 15, paddingHorizontal: 25}}>
-                        <Text style={{color: '#fff'}}>All</Text>
-                    </Pressable>
-                </ScrollView>
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                    <View style={styles.rowItem}>
-                        <Text style={styles.normalText}>{date.getDate()+'th '+monthNames[date.getMonth()]+' '+date.getFullYear()}</Text>
-                        <Text style={styles.boldText}>React Native Event</Text>
-                        <View style={{flexDirection: 'row',alignItems: 'center',}}>
-                            <Icon size={20} name="map-marker-outline" />
-                            <Text style={styles.normalText}>Strathmore, Main Hall</Text>
-                        </View>
-                        <View style={styles.row}>
-                            <Icon size={25} name="heart" color={'red'} />
-                            <Pressable style={styles.butttonStyle}>
-                                <Text style={{color: 'white'}}>Register</Text>
-                            </Pressable>
-                        </View>
-                    </View>
-                    <View style={styles.rowItem}>
-                
-                        <Text style={styles.normalText}>{date.getDate()+'th '+monthNames[date.getMonth()]+' '+date.getFullYear()}</Text>
-                        <Text style={styles.boldText}>React Native Event</Text>
-                        <View style={{flexDirection: 'row',alignItems: 'center',}}>
-                            <Icon size={20} name="map-marker-outline" />
-                            <Text style={styles.normalText}>Strathmore, Main Hall</Text>
-                        </View>
-                        <View style={styles.row}>
-                            <Icon size={25} name="heart" color={'red'} />
-                            <Pressable style={styles.butttonStyle}>
-                                <Text style={{color: 'white'}}>Register</Text>
-                            </Pressable>
-                        </View>
-                    </View>
-                    <View style={styles.rowItem}>
-                        <Text style={styles.normalText}>{date.getDate()+'th '+monthNames[date.getMonth()]+' '+date.getFullYear()}</Text>
-                        <Text style={styles.boldText}>React Native Event</Text>
-                        <View style={{flexDirection: 'row',alignItems: 'center',}}>
-                            <Icon size={20} name="map-marker-outline" />
-                            <Text style={styles.normalText}>Strathmore, Main Hall</Text>
-                        </View>
-                        <View style={styles.row}>
-                            <Icon size={25} name="heart" color={'red'} />
-                            <Pressable style={styles.butttonStyle}>
-                                <Text style={{color: 'white'}}>Register</Text>
-                            </Pressable>
-                        </View>
-                    </View>
+                    <EventItemComponent 
+                        title={'React Native Meetup'} 
+                        image='https://picsum.photos/200/300' 
+                        date={new Date()} 
+                        handleNavigation={handleNavigation} 
+                        price={1500}
+                        location={'Lagos, Nigeria'}
+                        description={'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.'}
+                    />
+                    <EventItemComponent 
+                        title={'AngularJS Meetup'} 
+                        image='https://picsum.photos/200/300' 
+                        date={new Date('2021-05-12')} 
+                        handleNavigation={handleNavigation} 
+                        price={2000}
+                        location={'Strathmore, Kenya'}
+                        description={'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.'}
+                    />
                 </ScrollView>
             </View>
             <View style={styles.eventsSection}>
@@ -117,7 +88,7 @@ export default function HomeScreen(props) {
                     <SpeakerComponent/>
                 </View>
             </View>
-            <Pressable style={styles.addButton}>
+            <Pressable android_ripple={{color:'#f5f5f5'}}  style={styles.addButton}>
                 <Icon size={25} name="plus" color={'white'} />
             </Pressable>
         </View>
@@ -147,8 +118,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 10,
         marginVertical: 10,
-        // width: '60%',
-        padding: 10,
+        width: 200,
+        // padding: 10,
         marginHorizontal: 10
     },
     categoryItem:{
