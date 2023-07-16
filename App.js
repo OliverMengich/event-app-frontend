@@ -8,6 +8,8 @@ import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegistrationScreen from './screens/RegistrationScreen';
 import FavouritesScreen from './screens/FavouritesScreen';
+import EventScreen from './screens/EventScreen';
+import CustomDrawerComponent from './components/CustomDrawerComponent.component';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator()
@@ -118,6 +120,19 @@ export default function App() {
                                 options={{
                                     headerShown:false,
 
+                                }}
+                            />
+                            <Stack.Screen
+                                name='EventDetails'
+                                component={EventScreen}
+                                options={{
+                                    headerRight: ()=>(<Icon size={25} name="dots-vertical" />),
+                                    headerTitle:'',
+                                    headerStyle:{
+                                        backgroundColor: '#f9f7f8'
+                                    },
+                                    // change back navigation icon
+                                    headerLeft: ()=>(<Icon size={25} name="chevron-left" />),
                                 }}
                             />
                             <Stack.Screen

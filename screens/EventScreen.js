@@ -13,10 +13,6 @@ export default function EventScreen() {
             <StatusBar  style='auto' />
             <View style={{ width: '100%'}}>
                 <View style={{alignItems: 'center',}}>
-                    <View style={{flexDirection: 'row',width:'100%', justifyContent:'space-between', paddingHorizontal:10}}>
-                        <Icon size={25} name="chevron-left" />
-                        <Icon size={25} name="dots-vertical" />
-                    </View>
                     <View style={{marginVertical: 30,}}>
                         <Image
                             style={styles.tinyLogo}
@@ -124,7 +120,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f9f7f8',
-        marginTop: 50,
+        // marginTop: 50,
         paddingHorizontal:10,
 
     },
