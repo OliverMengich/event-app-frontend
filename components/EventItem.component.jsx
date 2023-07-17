@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet, Image } from 'react-native';
 import Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 const monthNames = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
-// const date = new Date();
+import {EVENTS} from '../screens/FavouritesScreen'
 function EventItemComponent({handleNavigation,date, ...otherProps}) {
-    const {title, description, location, price, image} = otherProps;
-    const [isPressed, setIsPressed] = React.useState(false);
+    const {title, description, location, price, id,favourite, image,} = otherProps;
+    
     function handleFavorite(){
-        setIsPressed(!isPressed);
+        // setIsPressed(!isPressed); 
+        const event = EVENTS.find((e)=>e.id===id);
+        event.favourite= !event.favourite
+        console.log(event);
     }
+    
     return (
         <View style={styles.rowItem}>
             <Pressable onPress={handleNavigation} android_ripple={{color: '#f5f5f5'}} style={{}}>
@@ -23,7 +27,7 @@ function EventItemComponent({handleNavigation,date, ...otherProps}) {
                 />
                 <View style={{position: 'absolute', top: 5, right: 5}}>
                     <Pressable onPress={handleFavorite} android_ripple={{color: '#f5f5f5'}}  >
-                        <Icon size={25} name={isPressed?"heart": "heart-outline" } color={isPressed ? 'red' : 'white'} />
+                        <Icon size={25} name={favourite?"heart": "heart-outline" } color={favourite ? 'red' : 'white'} />
                     </Pressable>
                 </View>
             </View>
@@ -72,7 +76,6 @@ const styles = StyleSheet.create({
     },
     butttonStyle:{
         backgroundColor: '#4285f4',
-        borderRadius: 15,
         paddingVertical: 5,
         paddingHorizontal: 20,
     },

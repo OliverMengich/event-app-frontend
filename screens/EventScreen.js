@@ -1,31 +1,54 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet,SafeAreaView, Image, Text, View, Dimensions, Pressable } from 'react-native';
+import { useLayoutEffect,} from 'react';
+import { StyleSheet,SafeAreaView, Image, Text, View, Dimensions, Pressable, ImageBackground } from 'react-native';
 import Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
+import { EVENTS } from './FavouritesScreen';
 const monthNames = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
 const {width, height} = Dimensions.get('window');
 
-const date = new Date();
-export default function EventScreen() {
+export default function EventScreen({route, navigation}) {
+    const eventId = route.params.eventId;
+    const event = EVENTS.find((ev)=>ev.id===eventId)
+    const date = new Date(event.date);
+    useLayoutEffect(() => {
+        const event = EVENTS.find((ev)=>ev.id===eventId)
+        console.log('Event ID is: ',event);
+        navigation.setOptions({
+            header: ()=> (
+                <View >
+                    <ImageBackground
+                        imageStyle={styles.tinyLogo}
+                        source={{
+                            uri: event.image,
+                        }}
+                   >
+                        <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, marginVertical: 20,}}>
+                            <Pressable style={{marginVertical: 30}} onPress={() => navigation.goBack()}>
+                                <Icon style={{backgroundColor: '#fff', borderRadius: 15}} name="chevron-left" size={30} color="#262739" />
+                            </Pressable>
+                            <View style={{flexDirection: 'row', marginVertical: 30}}>
+                                <Icon name="heart-outline" size={20} color="red" />
+                                <Pressable onPress={() => navigation.navigate('EditEvent')}>
+                                    <Icon name="dots-vertical" size={20} color="#fff" />
+                                </Pressable>
+                            </View>
+                        </View>
+                   </ImageBackground>
+                </View>
+            )
+
+        });
+    }, [navigation]);
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar  style='auto' />
+            <StatusBar  style='light' />
             <View style={{ width: '100%'}}>
-                <View style={{alignItems: 'center',}}>
-                    <View style={{marginVertical: 30,}}>
-                        <Image
-                            style={styles.tinyLogo}
-                            source={{
-                                uri: 'https://reactnative.dev/img/tiny_logo.png',
-                            }}
-                        />
-                    </View>
-                </View>
-                <View style={{alignItems:'flex-start', paddingHorizontal: 10}}>
-                    <View >
+                <View style={{alignItems:'flex-start',paddingHorizontal: 10}}>
+                    <View style={{marginVertical: 10}}>
                         <Text >Event Title</Text>
-                        <Text style={styles.boldText}>React Native Event</Text>
+                        <Text style={styles.boldText}>{event.title}</Text>
                     </View>
                     <View style={styles.row}>
                         <View>
@@ -43,10 +66,10 @@ export default function EventScreen() {
                             </View>
                         </View>
                     </View>
-                    <View>
+                    <View style={{marginVertical: 10}}>
                         <Text style={styles.boldText}>Description</Text>
                         <Text>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                            {event.description}
                         </Text>
                     </View>
                     <View>
@@ -77,9 +100,8 @@ export default function EventScreen() {
                     <View>
                         <Text style={styles.boldText}>Location</Text>
                         <Text>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                            {event.location}
                         </Text>
-
                     </View>
                     <View>
                         <Text style={styles.boldText}>Attendees</Text>
@@ -112,6 +134,15 @@ export default function EventScreen() {
                     </View>
                 </View>
             </View>
+            <View style={styles.footer}>
+                <View >
+                    <Text style={{fontWeight: 'bold', }}>Price</Text>
+                    <Text style={{fontWeight: 'bold', fontSize: 20,}}>{event.price} KES</Text>
+                </View>
+                <Pressable android_ripple={{color: '#fff',}} style={styles.registerbutton}>
+                    <Text style={{fontWeight: 'bold', color: '#fff', textTransform: 'uppercase'}}>Register</Text>
+                </Pressable> 
+            </View>
         </SafeAreaView>
     );
 }
@@ -119,15 +150,17 @@ export default function EventScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f9f7f8',
-        // marginTop: 50,
-        paddingHorizontal:10,
+        // backgroundColor: '#f9f7f8',
+        position: 'relative',
+        marginTop: height * .25,
+        // paddingHorizontal:10,
 
     },
     tinyLogo:{
-        width: width* .8,
-        height: height* .28,
-        borderRadius: 10,
+        width: width,
+        height: height* .40,
+        borderBottomLeftRadius: 50,
+        borderBottomRightRadius: 50,
     },
     row:{
         flexDirection: 'row',
@@ -147,6 +180,7 @@ const styles = StyleSheet.create({
     boldText:{
         fontWeight: 'bold',
         fontSize: 20,
+        color: '#262739'
     },
     normalText:{
         fontWeight: 'normal',
@@ -180,5 +214,23 @@ const styles = StyleSheet.create({
         borderWidth: 2, 
         borderColor: '#fff',
         position: 'relative'
+    },
+    footer:{
+        position: 'absolute', 
+        bottom: 0, 
+        width: '100%', 
+        backgroundColor: '#fff',
+        padding: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    registerbutton:{
+        backgroundColor: 'red',
+        paddingVertical: 12,
+        paddingHorizontal: 10,
+        width: width*.5,
+        alignItems: 'center',
+        borderRadius: 10,
     }
 });
