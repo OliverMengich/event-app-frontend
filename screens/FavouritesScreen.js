@@ -38,12 +38,14 @@ function FavouritesScreen({navigation}) {
     function handleNavigation(){
         navigation.navigate('EventDetails')
     }
+    const favouriteEvents = EVENTS.filter((ev)=>ev.favourite);
+    console.log(favouriteEvents);
     return (
         <View style={{ flex: 1,  }}>
             <Text style={styles.boldText}>Favourite Events</Text>
             <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
                 <FlatList
-                    data={EVENTS}
+                    data={favouriteEvents}
                     renderItem={({item}) => (
                         <EventItemComponent
                             title={item.title}
@@ -53,7 +55,9 @@ function FavouritesScreen({navigation}) {
                             price={item.price}
                             description={item.description}
                             location={item.location}
-                        />)
+                            favourite={item.favourite}
+                        />
+                        )
                     }
                     keyExtractor={item => item.id}
                     numColumns={2}
