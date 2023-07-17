@@ -54,13 +54,10 @@ function DrawerNavigator(){
                 headerStyle:{
                     backgroundColor: '#f9f7f8'
                 },
-				// drawerActiveTintColor: 'none',
-                // drawerInactiveTintColor: '#351401',
                 drawerStyle:{
                     backgroundColor: '#f9f7f8',
                     width: 300,
                 },
-            
             }}
             drawerContent={props => <CustomDrawerContainer {...props} />}
             >
@@ -68,7 +65,17 @@ function DrawerNavigator(){
                 name='Home' 
                 component={HomeScreen}
                 options={{
-                    headerRight: ()=>(<Icon size={25} name="bell-outline" />),
+                    headerRight: ()=>(
+                        <View style={{flexDirection: 'row', marginRight: 10}}>
+                            <Icon size={25} name="cart-variant" />
+                            <View style={{marginLeft: 5}}>
+                                <Icon size={25} name="bell-outline" />
+                                <View style={{position:'absolute', top: -5, right: -5, backgroundColor: 'red', borderRadius: 10, width: 20, height: 20, alignItems:'center', justifyContent:'center'}}>
+                                    <Text style={{color:'#fff', fontSize: 10}}>2</Text>
+                                </View>
+                            </View>
+                        </View>
+                    ),
                     drawerIcon:()=>(<Icon size={25} name="home-outline" />),
                     headerStyle:{
                         backgroundColor: '#f9f7f8'
@@ -151,7 +158,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#f9f7f8',
         // marginTop: 50,
-        paddingHorizontal:10,
+        // paddingHorizontal:10,
         
     },
     viewNest:{
