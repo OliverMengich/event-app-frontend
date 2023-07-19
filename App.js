@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet,SafeAreaView,View,Image, Text} from 'react-native';
+import { StyleSheet,SafeAreaView,View,Image,Dimensions, Text, Pressable} from 'react-native';
 import { createNativeStackNavigator,} from '@react-navigation/native-stack'
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList} from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
@@ -9,16 +9,22 @@ import LoginScreen from './screens/LoginScreen';
 import RegistrationScreen from './screens/RegistrationScreen';
 import FavouritesScreen from './screens/FavouritesScreen';
 import EventScreen from './screens/EventScreen';
-import CustomDrawerComponent from './components/CustomDrawerComponent.component';
+import EventsScreen from './screens/EventsScreen';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
+import ProfileScreen from './screens/ProfileScreen';
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator()
 
+const { height } = Dimensions.get('window')
 function CustomDrawerContainer(props){
+    console.log(props.navigation)
+    const handleNavigation = ()=>{
+        props.navigation.navigate('Profile')
+    }
     return(
         
         <DrawerContentScrollView contentContainerStyle={styles.viewNest} {...props}>
-            <View style={{alignItems:'center', borderBottomWidth: 1}}>
+            <View style={{alignItems:'center',  borderBottomWidth: 1}}>
                 <View style={{flexDirection:'row', alignItems:'center'}}>
                     <Image source={require('./assets/icon.png')} style={{width: 60, height: 60, borderRadius: 20}}/>
                     <View>
@@ -35,14 +41,19 @@ function CustomDrawerContainer(props){
                         <Icon size={25} name="bookmark-outline" style={styles.signInOptionIcon} color={'#f76810'} />
                         <Text style={{color:'#000', fontSize: 11}}>Bookmarks</Text>
                     </View>
-                    <View style={{marginHorizontal: 8}}>
+                    <Pressable onPress={handleNavigation} style={{marginHorizontal: 8}}>
                         <Icon size={25} name="account" style={styles.signInOptionIcon} color={'#90EE90'} />
                         <Text style={{color:'#000', fontSize: 11}}>Account</Text>
-                    </View>
+                    </Pressable>
                 </View>
             </View>
-            <DrawerItemList {...props}/>
-            <Text>Footer</Text>
+            <View style={{marginTop: height *.1}}>
+                <DrawerItemList {...props}/>
+            </View>
+            <View style={{position: 'absolute',flexDirection: 'row', paddingVertical: 10, bottom: 0,width: '100%',alignItems: 'center', backgroundColor: '#4285f4'}}>
+                <Icon size={25} name="bookmark-outline" color={'#fff'} />
+                <Text>Logout</Text>
+            </View>
         </DrawerContentScrollView>
     )
 }
@@ -88,12 +99,43 @@ function DrawerNavigator(){
                 name='Favourites' 
                 component={FavouritesScreen}
                 options={{
-                    headerRight: ()=>(<Icon size={25} name="bell-outline" />),
+                    headerRight: ()=>(
+                        <View style={{marginRight: 10}}> 
+                            <View style={{marginLeft: 5}}>
+                                <Icon size={25} name="bell-outline" />
+                                <View style={{position:'absolute', top: -5, right: -5, backgroundColor: 'red', borderRadius: 10, width: 20, height: 20, alignItems:'center', justifyContent:'center'}}>
+                                    <Text style={{color:'#fff', fontSize: 10}}>2</Text>
+                                </View>
+                            </View>
+                        </View>
+                    ),
                     drawerIcon:()=>(<Icon size={25} name="home-outline" />),
                     headerStyle:{
                         backgroundColor: '#f9f7f8'
                     },
                     title:'Favourites',
+                    headerTitle:''
+                }}
+            />
+            <Drawer.Screen 
+                name='Events' 
+                component={EventsScreen}
+                options={{
+                    headerRight: ()=>(
+                        <View style={{marginRight: 10}}> 
+                            <View style={{marginLeft: 5}}>
+                                <Icon size={25} name="bell-outline" />
+                                <View style={{position:'absolute', top: -5, right: -5, backgroundColor: 'red', borderRadius: 10, width: 20, height: 20, alignItems:'center', justifyContent:'center'}}>
+                                    <Text style={{color:'#fff', fontSize: 10}}>2</Text>
+                                </View>
+                            </View>
+                        </View>
+                    ),
+                    drawerIcon:()=>(<Icon size={25} name="home-outline" />),
+                    headerStyle:{
+                        backgroundColor: '#f9f7f8'
+                    },
+                    title:'All Events',
                     headerTitle:''
                 }}
             />
@@ -146,6 +188,10 @@ export default function App() {
                                 name='Login'
                                 component={LoginScreen}
                             />
+                            <Stack.Screen
+                                name='Profile'
+                                component={ProfileScreen}
+                            />
                     </Stack.Navigator>
                 </SafeAreaView>
             </NavigationContainer>
@@ -157,16 +203,19 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f9f7f8',
-        // marginTop: 50,
-        // paddingHorizontal:10,
         
     },
     viewNest:{
         // alignItems:'center',
         // justifyContent:'center',
         marginTop:30,
-        // backgroundColor:COLORS.white,
-        // backgroundColor:'red',
+        position: 'relative',
+        height: height,
     },
-    signInOptionIcon:{backgroundColor:'#fff', borderRadius: 15, padding:5, marginHorizontal:5},
+    signInOptionIcon:{
+        backgroundColor:'#fff', 
+        borderRadius: 15, 
+        padding:5, 
+        marginHorizontal:5
+    },
 });

@@ -20,36 +20,7 @@ export default function HomeScreen({navigation}) {
                     <Icon size={25} name="filter-variant-remove" />
                 </View>
             </View>
-            <View>
-                <Text style={styles.boldText}>Categories</Text>
 
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                    {/* <View style={styles.rowContainer}> */}
-                        <View style={styles.categoryItem}>
-                            <Icon size={35} name="music" />
-                            <View style={{alignItems:'center'}}>
-                                <Text style={[styles.normalText,{fontSize: 20}]}>Concerts</Text>
-                                <Text>22 Events</Text>
-                            </View>
-                        </View>
-                        <View style={styles.categoryItem}>
-                            <Icon size={25} name="food" />
-                            <View>
-                                <Text style={[styles.normalText,{fontSize: 20}]}>Food</Text>
-                                <Text>22 Events</Text>
-                            </View>
-                        </View>
-                        <View style={styles.categoryItem}>
-                            <Icon size={25} name="weight-lifter" />
-                            <Text style={styles.normalText}>Fitness</Text>
-                        </View>
-                        <View style={styles.categoryItem}>
-                            <Icon size={25} name="laptop" />
-                            <Text style={styles.normalText}>Tech</Text>
-                        </View>
-                    {/* </View> */}
-                </ScrollView>
-            </View>
             <View style={styles.eventsSection}>
                 <View style={styles.rowContainer}>
                     <Text style={styles.boldText}>Popular Events</Text>
@@ -58,8 +29,9 @@ export default function HomeScreen({navigation}) {
                 </View>
                 <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                     {
-                        EVENTS.map((event)=>(
+                        EVENTS.map((event,id)=>(
                             <EventItemComponent 
+                                key={id}
                                 id={event.id}
                                 title={event.title} 
                                 image={event.image}
@@ -77,13 +49,16 @@ export default function HomeScreen({navigation}) {
             <View style={styles.eventsSection}>
                 <View style={styles.rowContainer}>
                     <Text style={styles.boldText}>Speakers</Text>
-                    <Icon size={25} name="dots-horizontal" />
+                    {/* <Icon size={25} name="dots-horizontal" /> */}
+                    <Text style={{color:'#4285f4'}}>Show all</Text>
                 </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                    <SpeakerComponent/>
+                </ScrollView>
+                {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <SpeakerComponent/>
                     <SpeakerComponent/>
-                    <SpeakerComponent/>
-                </View>
+                </View> */}
             </View>
             <Pressable android_ripple={{color:'#f5f5f5'}}  style={styles.addButton}>
                 <Icon size={25} name="plus" color={'white'} />
