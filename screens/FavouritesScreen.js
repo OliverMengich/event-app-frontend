@@ -35,8 +35,10 @@ export const EVENTS = [
     }
 ]
 function FavouritesScreen({navigation}) {
-    function handleNavigation(){
-        navigation.navigate('EventDetails')
+    function handleNavigation(id){
+        navigation.navigate('EventDetails',{
+            eventId: id
+        })
     }
     const favouriteEvents = EVENTS.filter((ev)=>ev.favourite);
     console.log(favouriteEvents);
@@ -51,7 +53,7 @@ function FavouritesScreen({navigation}) {
                             title={item.title}
                             image={item.image}
                             date={item.date}
-                            handleNavigation={handleNavigation}
+                            handleNavigation={()=>handleNavigation(item.id)}
                             price={item.price}
                             description={item.description}
                             location={item.location}
