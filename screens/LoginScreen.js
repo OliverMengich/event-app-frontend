@@ -1,22 +1,79 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet,SafeAreaView, Image, Text, View, Dimensions, Pressable, TextInput } from 'react-native';
+import { StyleSheet,SafeAreaView, Text, View, Pressable, TextInput } from 'react-native';
 import Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
-
-const date = new Date();
-export default function LoginScreen() {
+import { useQuery, } from '@tanstack/react-query';
+import React,{useState} from 'react';
+import axios from 'axios';
+export default function LoginScreen({navigation}) {
+    const [loginData, setLoginData] = useState({
+        email: '',
+        password: '',
+    });
+    const { refetch, data} = useQuery({
+        queryKey: ['user'],
+        queryFn: async ()=> {
+            console.log('Sending connection login')
+            try {
+                const response = await axios.post('http://192.168.88.251:3000/auth/login', {
+                    email: loginData.email,
+                    password: loginData.password,
+                });
+                console.log(response.data);
+                
+                return response.data;
+            } catch (error) {
+                console.log('Error encountered: ', error);
+            }
+        },
+        enabled: false,
+        networkMode: 'offline',
+    })
+    const handleTextChange = (key,value) => {
+        console.log(key,value);
+        setLoginData({
+            ...loginData,
+            [ key ]: value,
+        });
+    }
+    function handleNavigation(){
+        navigation.navigate('Registration');
+    }
+    function handleLogin(){
+        console.log('Logging in');
+        console.log(loginData);
+        refetch();
+    }
+    if (data !== undefined) {
+        console.log('Data',data);
+        navigation.navigate('Home',{
+            ...data
+        });
+    }
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar  style='auto' />
             <View style={{width: '100%', alignItems:'center'}}>
                 <View style={{width:'100%'}}>
                     <Text>Email</Text>
-                    <TextInput style={styles.textInputStyle} placeholder='Enter Your Name'/>
+                    <TextInput 
+                        keyboardType='email-address' 
+                        onChangeText={(text)=>handleTextChange('email',text)} 
+                        style={styles.textInputStyle} 
+                        placeholder='Enter Your Name'
+                        value={loginData.email}
+                    />
                 </View> 
                 <View style={{width:'100%'}}>
                     <Text>Password</Text>
-                    <TextInput style={styles.textInputStyle} placeholder='Enter Your Password'/>
+                    <TextInput 
+                        keyboardType='visible-password'
+                        onChangeText={(text)=>handleTextChange('password',text)} 
+                        style={styles.textInputStyle} 
+                        placeholder='Enter Your Password'
+                        value={loginData.password}
+                    />
                 </View>    
-                <Pressable style={styles.buttonStyle}>
+                <Pressable onPress={handleLogin} style={styles.buttonStyle}>
                     <Text style={styles.textcolor}>LOGIN</Text>
                 </Pressable>
                 <Pressable>
@@ -27,9 +84,8 @@ export default function LoginScreen() {
                     <Icon size={25} name="twitter" style={styles.signInOptionIcon} color={'#24a3f1'} />
                     <Icon size={25} name="instagram"  style={styles.signInOptionIcon} color={'#f76810'} />
                     <Icon size={25} name="linkedin" style={styles.signInOptionIcon} color={'#24a3f1'} />
-
                 </View>
-                <Pressable>
+                <Pressable android_ripple={{color: '#f5f5f5'}} onPress={handleNavigation} >
                     <Text style={styles.forgotPasswordText}>Don't have an account? Create one.</Text>
                 </Pressable>
             </View>
