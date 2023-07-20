@@ -12,24 +12,36 @@ import EventScreen from './screens/EventScreen';
 import EventsScreen from './screens/EventsScreen';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import ProfileScreen from './screens/ProfileScreen';
+import SpeakerProfile from './screens/SpeakerProfile';
+import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator()
 
-const { height } = Dimensions.get('window')
+const { height } = Dimensions.get('window');
+function capitalizeFirstLetter(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+  
 function CustomDrawerContainer(props){
-    console.log(props.navigation)
     const handleNavigation = ()=>{
         props.navigation.navigate('Profile')
     }
+    console.log('Props.data: ', props.data.name)
+    console.log(JSON.stringify(props.data).name)
+    const {name,role, image} = (props.data);
     return(
-        
         <DrawerContentScrollView contentContainerStyle={styles.viewNest} {...props}>
             <View style={{alignItems:'center',  borderBottomWidth: 1}}>
                 <View style={{flexDirection:'row', alignItems:'center'}}>
-                    <Image source={require('./assets/icon.png')} style={{width: 60, height: 60, borderRadius: 20}}/>
+                    <Image 
+                        source={{
+                            uri: image
+                        }}
+                        style={styles.imageStyle}
+                    />
                     <View>
-                        <Text style={{color:'#000',fontWeight:'bold', fontSize: 18}}>Oliver Kipkemei</Text>
-                        <Text style={{color:'blue', fontSize: 15}}>Attendee</Text>
+                        <Text style={{color:'#000',fontWeight:'bold', fontSize: 18}}>{capitalizeFirstLetter(name)}</Text>
+                        <Text style={{color:'blue', fontSize: 15}}>{role}</Text>
                     </View>
                 </View>
                 <View style={{flexDirection: 'row',marginVertical:10}}>
@@ -50,15 +62,15 @@ function CustomDrawerContainer(props){
             <View style={{marginTop: height *.1}}>
                 <DrawerItemList {...props}/>
             </View>
-            <View style={{position: 'absolute',flexDirection: 'row', paddingVertical: 10, bottom: 0,width: '100%',alignItems: 'center', backgroundColor: '#4285f4'}}>
+            <Pressable onPress={()=>props.navigation.navigate('Login')} style={{position: 'absolute',flexDirection: 'row', paddingVertical: 10, bottom: 0,width: '100%',alignItems: 'center', backgroundColor: '#4285f4'}}>
                 <Icon size={25} name="bookmark-outline" color={'#fff'} />
                 <Text>Logout</Text>
-            </View>
+            </Pressable>
         </DrawerContentScrollView>
     )
 }
-
-function DrawerNavigator(){
+function DrawerNavigator({route}){
+    console.log('router parameters are: ',route.params)
     return(
         <Drawer.Navigator
             screenOptions={{
@@ -70,10 +82,10 @@ function DrawerNavigator(){
                     width: 300,
                 },
             }}
-            drawerContent={props => <CustomDrawerContainer {...props} />}
+            drawerContent={props => <CustomDrawerContainer data={route.params} {...props} />}
             >
             <Drawer.Screen 
-                name='Home' 
+                name='HomeScreen' 
                 component={HomeScreen}
                 options={{
                     headerRight: ()=>(
@@ -142,21 +154,30 @@ function DrawerNavigator(){
         </Drawer.Navigator>
     )
 }
+const queryClient = new QueryClient()
 export default function App() {
     return (
-        <>
+        <QueryClientProvider client={queryClient}>
             <StatusBar backgroundColor='#f9f7f8' style='auto' />
             <NavigationContainer>
                 <SafeAreaView style={styles.container}>
                     {/* <Text style={styles.boldText}>Register</Text> */}
-                    <Stack.Navigator screenOptions={{
+                    <Stack.Navigator  
+                        screenOptions={{
                             headerStyle: {
                                 backgroundColor: '#f9f7f8'
                             },
                         }}
                         >
                             <Stack.Screen
-                                name='Home Screen'
+                                name='Login'
+                                component={LoginScreen}
+                                options={{
+                                    headerShown: false
+                                }}
+                            />
+                            <Stack.Screen
+                                name='Home'
                                 component={DrawerNavigator}
                                 options={{
                                     title:'',
@@ -164,11 +185,10 @@ export default function App() {
                                 }}
                             />
                             <Stack.Screen 
-                                name='Join Us'
+                                name='Registration'
                                 component={RegistrationScreen}
                                 options={{
                                     headerShown:false,
-
                                 }}
                             />
                             <Stack.Screen
@@ -184,10 +204,7 @@ export default function App() {
                                     headerLeft: ()=>(<Icon size={25} name="chevron-left" />),
                                 }}
                             />
-                            <Stack.Screen
-                                name='Login'
-                                component={LoginScreen}
-                            />
+                            
                             <Stack.Screen
                                 name='Profile'
                                 component={ProfileScreen}
@@ -195,7 +212,7 @@ export default function App() {
                     </Stack.Navigator>
                 </SafeAreaView>
             </NavigationContainer>
-        </>
+        </QueryClientProvider>
     );
 }
 
@@ -218,4 +235,9 @@ const styles = StyleSheet.create({
         padding:5, 
         marginHorizontal:5
     },
+    imageStyle: {
+        width: 60, 
+        height: 60, 
+        borderRadius: 20
+    }
 });
