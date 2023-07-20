@@ -41,7 +41,6 @@ function FavouritesScreen({navigation}) {
         })
     }
     const favouriteEvents = EVENTS.filter((ev)=>ev.favourite);
-    console.log(favouriteEvents);
     return (
         <View style={{ flex: 1,  }}>
             <Text style={styles.boldText}>Favourite Events</Text>
@@ -55,6 +54,7 @@ function FavouritesScreen({navigation}) {
                             date={item.date}
                             handleNavigation={()=>handleNavigation(item.id)}
                             price={item.price}
+                            id={item.id}
                             description={item.description}
                             location={item.location}
                             favourite={item.favourite}
