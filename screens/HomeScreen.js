@@ -1,16 +1,42 @@
 import React from 'react';
-import { StyleSheet, Text, View,Image, TextInput,FlatList, Pressable, ScrollView } from 'react-native';
+import { useQueries, useQueryClient } from '@tanstack/react-query';
+import { StyleSheet, Text, View,Animated, TextInput, Pressable, ScrollView } from 'react-native';
 import Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import SpeakerComponent from '../components/Speaker.component';
 import EventItemComponent from '../components/EventItem.component';
-import {EVENTS} from './FavouritesScreen'
+// import axios from 'axios';
 export default function HomeScreen({navigation}) {
+    const queryClient = useQueryClient();
     function handleNavigation(id){
         console.log('Id',id);
         navigation.navigate('EventDetails',{
             eventId: id
         })
     }
+    const resp = queryClient.getQueryData(['user'])
+    console.log(resp, 'In homescreen')
+    const [eventsQuery, speakersQuery] = useQueries({
+        queries:[
+            {
+                queryKey: ['events'],
+                queryFn: async () => {
+                    const response = await fetch('http://192.168.88.251:3000/events');
+                    return response.json();
+                },
+                networkMode: 'always',
+            },
+            {
+                queryKey: ['speakers'],
+                queryFn: async () => {
+                    const response = await fetch('http://192.168.88.251:3000/speakers');
+                    return response.json();
+                },
+                networkMode: 'always'
+            }
+        ]
+    });
+    console.log('Events',eventsQuery.data);
+    console.log('Speakers',speakersQuery.data);
     return (
         <View style={styles.container}>
             <View style={{marginTop: 60}}>
@@ -20,49 +46,65 @@ export default function HomeScreen({navigation}) {
                     <Icon size={25} name="filter-variant-remove" />
                 </View>
             </View>
-
             <View style={styles.eventsSection}>
                 <View style={styles.rowContainer}>
                     <Text style={styles.boldText}>Popular Events</Text>
-                    {/* <Icon size={25} name="dots-horizontal" /> */}
                     <Text style={{color:'#4285f4'}}>Show all</Text>
                 </View>
                 <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                     {
-                        EVENTS.map((event,id)=>(
-                            <EventItemComponent 
-                                key={id}
-                                id={event.id}
-                                title={event.title} 
-                                image={event.image}
-                                date={event.date}
-                                handleNavigation={()=>handleNavigation(event.id)} 
-                                price={event.price}
-                                location={event.location}
-                                description={event.description}
-                                favourite={event.favourite}
-                            />
-                        ))
+                        eventsQuery.isFetching? (
+                            <Text>Loading...</Text>
+                        ):(
+                            eventsQuery.data.map((event,id)=>(
+                                <EventItemComponent
+                                    key={id}
+                                    id={event.id}
+                                    title={event.title}
+                                    image={event.image[0]}
+                                    date={event.date}
+                                    handleNavigation={()=>handleNavigation(event.id)}
+                                    price={event.price}
+                                    location={'fdf'}
+                                    description={event.description}
+                                    favourite={event.favourite}
+                                />
+                            ))
+                        )
                     }
                 </ScrollView>
             </View>
             <View style={styles.eventsSection}>
                 <View style={styles.rowContainer}>
                     <Text style={styles.boldText}>Speakers</Text>
-                    {/* <Icon size={25} name="dots-horizontal" /> */}
                     <Text style={{color:'#4285f4'}}>Show all</Text>
                 </View>
                 <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-                    <SpeakerComponent/>
+                    {
+                        speakersQuery.isFetching? (
+                            <Text>Loading...</Text>
+                        ):(
+                            speakersQuery.data.map((speaker,id)=>(
+                                <SpeakerComponent key={id}
+                                    id={speaker.id}
+                                    name={speaker.name}
+                                    image={speaker.image}
+                                    jobTitle={speaker.jobTitle}
+                                    navigation={navigation}
+                                />
+                            ))
+                        )
+                    }
                 </ScrollView>
-                {/* <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <SpeakerComponent/>
-                    <SpeakerComponent/>
-                </View> */}
             </View>
-            <Pressable android_ripple={{color:'#f5f5f5'}}  style={styles.addButton}>
-                <Icon size={25} name="plus" color={'white'} />
-            </Pressable>
+            <View style={{position: 'absolute', bottom: 30, right: 20,}}>
+                <Pressable android_ripple={{color:'#f5f5f5'}}  style={{}}>
+                    <Text>New Event</Text>
+                </Pressable>
+                <Pressable android_ripple={{color:'#f5f5f5'}}  style={styles.addButton}>
+                    <Icon style={{transform: [{ rotate: '45deg' }]}} size={25} name="plus" color={'white'} />
+                </Pressable>
+            </View>
         </View>
     );
 }
@@ -128,7 +170,11 @@ const styles = StyleSheet.create({
         paddingVertical: 2,
         paddingHorizontal: 10,
     },
-    addButton:{position: 'absolute', bottom: 30, right: 20, backgroundColor: 'red', borderRadius: 50, padding: 10},
+    addButton:{
+        backgroundColor: 'red', 
+        borderRadius: 50,
+        padding: 10,
+    },
     eventsSection:{
         marginVertical: 10,
         paddingVertical: 1,
