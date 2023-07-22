@@ -1,9 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet,SafeAreaView, Text, View, Pressable, TextInput } from 'react-native';
+import { StyleSheet,SafeAreaView,Dimensions, Text, View, Pressable, TextInput } from 'react-native';
 import Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useQuery, } from '@tanstack/react-query';
 import React,{useState} from 'react';
 import axios from 'axios';
+import { CONSTS } from '../constants';
+const {width, height} = Dimensions.get('window');
 export default function LoginScreen({navigation}) {
     const [loginData, setLoginData] = useState({
         email: '',
@@ -14,7 +16,7 @@ export default function LoginScreen({navigation}) {
         queryFn: async ()=> {
             console.log('Sending connection login')
             try {
-                const response = await axios.post('http://192.168.88.251:3000/auth/login', {
+                const response = await axios.post(`${CONSTS.BACKEND_URL}/auth/login`, {
                     email: loginData.email,
                     password: loginData.password,
                 });
@@ -52,7 +54,7 @@ export default function LoginScreen({navigation}) {
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar  style='auto' />
-            <View style={{width: '100%', alignItems:'center'}}>
+            <View style={{width: '100%',backgroundColor: '#f9f7f8', alignItems:'center'}}>
                 <View style={{width:'100%'}}>
                     <Text>Email</Text>
                     <TextInput 
@@ -98,8 +100,9 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#f9f7f8',
         paddingHorizontal:10,
-        alignItems: 'center',
-        justifyContent: 'center',
+        marginTop: height*0.4,
+        // alignItems: 'center',
+        // justifyContent: 'center',
     },
     textInputStyle: {
         height: 40,

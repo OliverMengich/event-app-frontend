@@ -44,7 +44,7 @@ function FavouritesScreen({navigation}) {
     return (
         <View style={{ flex: 1,  }}>
             <Text style={styles.boldText}>Favourite Events</Text>
-            <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+            {/* <View style={{flexDirection: 'row', flexWrap: 'wrap'}}> */}
                 <FlatList
                     data={favouriteEvents}
                     renderItem={({item}) => (
@@ -64,7 +64,7 @@ function FavouritesScreen({navigation}) {
                     keyExtractor={item => item.id}
                     numColumns={2}
                 />
-            </View>
+            {/* </View> */}
         </View>
     );
 }

@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useQueries, useQueryClient } from '@tanstack/react-query';
-import { StyleSheet, Text, View,Animated, TextInput, Pressable, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Pressable, ScrollView } from 'react-native';
 import Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import SpeakerComponent from '../components/Speaker.component';
 import EventItemComponent from '../components/EventItem.component';
 // import axios from 'axios';
+import { CONSTS } from '../constants';
 export default function HomeScreen({navigation}) {
     const queryClient = useQueryClient();
     function handleNavigation(id){
@@ -13,6 +14,8 @@ export default function HomeScreen({navigation}) {
             eventId: id
         })
     }
+    
+    const [toggle, setToggle] = useState(false);
     const resp = queryClient.getQueryData(['user'])
     console.log(resp, 'In homescreen')
     const [eventsQuery, speakersQuery] = useQueries({
@@ -20,7 +23,7 @@ export default function HomeScreen({navigation}) {
             {
                 queryKey: ['events'],
                 queryFn: async () => {
-                    const response = await fetch('http://192.168.88.251:3000/events');
+                    const response = await fetch(`${CONSTS.BACKEND_URL}/events`);
                     return response.json();
                 },
                 networkMode: 'always',
@@ -28,7 +31,7 @@ export default function HomeScreen({navigation}) {
             {
                 queryKey: ['speakers'],
                 queryFn: async () => {
-                    const response = await fetch('http://192.168.88.251:3000/speakers');
+                    const response = await fetch(`${CONSTS.BACKEND_URL}/speakers`);
                     return response.json();
                 },
                 networkMode: 'always'
@@ -49,7 +52,9 @@ export default function HomeScreen({navigation}) {
             <View style={styles.eventsSection}>
                 <View style={styles.rowContainer}>
                     <Text style={styles.boldText}>Popular Events</Text>
+                    <Pressable onPress={()=>navigation.navigate('Events')} android_ripple={{color:'#f5f5f5'}} style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Text style={{color:'#4285f4'}}>Show all</Text>
+                    </Pressable>
                 </View>
                 <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                     {
@@ -97,12 +102,23 @@ export default function HomeScreen({navigation}) {
                     }
                 </ScrollView>
             </View>
-            <View style={{position: 'absolute', bottom: 30, right: 20,}}>
-                <Pressable android_ripple={{color:'#f5f5f5'}}  style={{}}>
-                    <Text>New Event</Text>
-                </Pressable>
-                <Pressable android_ripple={{color:'#f5f5f5'}}  style={styles.addButton}>
-                    <Icon style={{transform: [{ rotate: '45deg' }]}} size={25} name="plus" color={'white'} />
+            <View style={{position: 'absolute',alignItems: 'center', bottom: 30, right: 30,}}>
+                {
+                    toggle?(
+                        <View>
+                            <Pressable onPress={()=>{navigation.navigate('NewEvent');setToggle(!toggle)}} android_ripple={{color:'#f5f5f5'}}  style={{backgroundColor: '#fff',marginBottom: 10, padding: 10}}>
+                                <Text>New Event</Text>
+                            </Pressable>
+                            <Pressable onPress={()=>{navigation.navigate('NewLocation');setToggle(!toggle)}} android_ripple={{color:'#f5f5f5'}}  style={{backgroundColor: '#fff',marginBottom: 10, padding: 10}}>
+                                <Text>New Location</Text>
+                            </Pressable>
+                            
+                        </View>
+                    ):null
+                }
+                
+                <Pressable onPress={()=>setToggle(!toggle)} android_ripple={{color:'#f5f5f5'}}  style={styles.addButton}>
+                    <Icon style={toggle ?{transform: [{ rotate: '45deg' }]}:{}} size={25} name="plus" color={'white'} />
                 </Pressable>
             </View>
         </View>
@@ -172,8 +188,11 @@ const styles = StyleSheet.create({
     },
     addButton:{
         backgroundColor: 'red', 
-        borderRadius: 50,
+        borderRadius: 25,
         padding: 10,
+        width: 50,
+        height: 50,
+        alignItems: 'center',
     },
     eventsSection:{
         marginVertical: 10,
