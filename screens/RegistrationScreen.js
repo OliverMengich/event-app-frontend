@@ -1,8 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet,SafeAreaView, Image, Text, View, Dimensions, Pressable, TextInput } from 'react-native';
+import { StyleSheet,SafeAreaView, Image, Text, View, Pressable, TextInput } from 'react-native';
 import Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useState } from 'react';
 import { useQuery, } from '@tanstack/react-query';
+import axios from 'axios';
+import { CONSTS } from '../constants';
 export default function RegistrationScreen({navigation}) {
     function handleNavigation(){
         navigation.navigate('Login');
@@ -17,13 +19,24 @@ export default function RegistrationScreen({navigation}) {
         queryKey: ['register'],
         queryFn:  ()=>{
             console.log('Sending connection login')
-            return axios.post('http://192.168.88.251:3000/register',{
+            return axios.post(`${CONSTS.BACKEND_URL}/register`,{
                 email: registrationData.email,
                 password: registrationData.password,
                 name: registrationData.name,
             }).then((response)=>{
                 console.log(response.data);
-                navigation.navigate('Login');
+                return axios.post(`${CONSTS.BACKEND_URL}/auth/login`,{
+                    email: response.data.email,
+                    password: response.data.password,
+                })
+                .then((resp)=>{
+                    console.log(resp.data);
+                    navigation.navigate('Home',{
+                        ...resp.data
+                    });
+                })
+                .catch((error)=>{
+                })
                 return response.data;
             }).catch((error)=>{
                 console.log('Error encountered',error);
@@ -39,6 +52,7 @@ export default function RegistrationScreen({navigation}) {
             [ key ]: value,
         });
     }
+    console.log('registrationdata',data);
     function handleRegistration(){
         console.log('Logging in');
         console.log(registrationData);
