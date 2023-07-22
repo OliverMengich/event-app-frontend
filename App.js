@@ -13,6 +13,8 @@ import EventsScreen from './screens/EventsScreen';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import ProfileScreen from './screens/ProfileScreen';
 import SpeakerProfile from './screens/SpeakerProfile';
+import NewEventScreen from './screens/NewEventScreen';
+import NewLocationScreen from './screens/NewLocationScreen';
 import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator()
@@ -208,6 +210,33 @@ export default function App() {
                             <Stack.Screen
                                 name='Profile'
                                 component={ProfileScreen}
+                            />
+                            <Stack.Screen
+                                name='SpeakerProfile'
+                                component={SpeakerProfile}
+                            />
+                            <Stack.Screen
+                                name='NewEvent'
+                                component={NewEventScreen}
+                                options={{
+                                    headerTitle:'New Event',
+                                    headerStyle:{
+                                        backgroundColor: '#f9f7f8'
+                                    },
+                                    headerLeft: ()=>(<Icon size={25} name="chevron-left" />),
+                                    title: '',
+                                }}
+                            />
+                            <Stack.Screen
+                                name='NewLocation'
+                                component={NewLocationScreen}
+                                options={{
+                                    headerStyle:{
+                                        backgroundColor: '#f9f7f8',
+                                    },
+                                    headerLeft: ()=>(<Icon size={25} name="chevron-left" />),
+                                    title: '',
+                                }}
                             />
                     </Stack.Navigator>
                 </SafeAreaView>
