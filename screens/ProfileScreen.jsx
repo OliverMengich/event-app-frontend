@@ -5,8 +5,19 @@ import { EVENTS } from './FavouritesScreen';
 
 const {width, height} = Dimensions.get('window');
 
-export default function ProfileScreen() {
-    
+export default function ProfileScreen({navigation}) {
+    navigation.setOptions({
+        header: ()=>(
+            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 10}}>
+                <Icon name="menu" size={30} color="#262739" onPress={()=>navigation.openDrawer()} />
+                <Text style={{fontSize: 20, fontWeight: 'bold', color: '#262739'}}>Profile</Text>
+                <Pressable android_ripple={{color: '#f5f5f5'}} onPress={()=>navigation.navigate('UserSettingScreen')}>
+                    <Icon name="settings" size={30} color="#262739" />
+                </Pressable>
+            </View>
+        ),
+
+    });
     return (
         <SafeAreaView style={styles.container}>
             {/* <StatusBar  style='light' /> */}
@@ -26,15 +37,14 @@ export default function ProfileScreen() {
                         </Pressable>
                     </View>
                 </View>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style={styles.boldText}>My Events</Text>
+                    <Pressable android_ripple={{color: '#f5f5f5'}}>
+                        <Text style={{color: CONSTS.PRIMARY_COLOR}}>Show All</Text>
+                    </Pressable>
+                </View>
             </View>
             <View style={{width: '80%'}}>
-                <View style={styles.detailsRole}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Icon name="account" size={20} color="#262739" />
-                        <Text>Edit Profile</Text>
-                    </View>
-                    <Icon name="chevron-right" size={20} color="#262739" />
-                </View>
                 <View style={styles.detailsRole}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                         <Icon name="account" size={20} color="#262739" />
@@ -42,22 +52,7 @@ export default function ProfileScreen() {
                     </View>
                     <Icon name="chevron-right" size={20} color="#262739" />
                 </View>
-                <View style={styles.detailsRole}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Icon name="account" size={20} color="#262739" />
-                        <Text>Feedback</Text>
-                    </View>
-                    <Icon name="chevron-right" size={20} color="#262739" />
-                </View>
-                <View style={styles.detailsRole}>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Icon name="bell" size={20} color="#262739" />
-                        
-                        <Text>Notifications</Text>
-                    </View>
-                    <Switch  />
-                    {/* <Icon name="chevron-right" size={20} color="#262739" /> */}
-                </View>
+                
             </View>
         </SafeAreaView>
     );
@@ -71,7 +66,6 @@ const styles = StyleSheet.create({
         // marginTop: height * .25,
         // paddingHorizontal:10,
         width: '100%',
-        alignItems: 'center'
 
     },
     tinyLogo:{
@@ -79,12 +73,6 @@ const styles = StyleSheet.create({
         height: height* .40,
         borderBottomLeftRadius: 50,
         borderBottomRightRadius: 50,
-    },
-    row:{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-around',
-        width: '80%',
     },
     boldText:{
         fontWeight: 'bold',
