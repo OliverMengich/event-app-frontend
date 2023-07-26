@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { useQueries, useQueryClient } from '@tanstack/react-query';
-import { StyleSheet, Text, View, TextInput, Pressable, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Pressable, ScrollView, ImageBackground } from 'react-native';
 import Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import SpeakerComponent from '../components/Speaker.component';
 import EventItemComponent from '../components/EventItem.component';
@@ -65,8 +65,8 @@ export default function HomeScreen({navigation}) {
                                 <EventItemComponent
                                     key={id}
                                     id={event.id}
-                                    title={event.title}
-                                    image={event.image[0]}
+                                    title={event.name.slice(0,20)}
+                                    image={event.image}
                                     date={event.date}
                                     handleNavigation={()=>handleNavigation(event.id)}
                                     price={event.price}
@@ -93,7 +93,7 @@ export default function HomeScreen({navigation}) {
                                 <SpeakerComponent key={id}
                                     id={speaker.id}
                                     name={speaker.name}
-                                    image={speaker.image}
+                                    image={speaker.imageUrl}
                                     jobTitle={speaker.jobTitle}
                                     navigation={navigation}
                                 />
@@ -101,6 +101,22 @@ export default function HomeScreen({navigation}) {
                         )
                     }
                 </ScrollView>
+            </View>
+            <View style={styles.eventsSection}>
+                <Text style={styles.boldText}>Featured</Text>
+                <ImageBackground
+                    source={{
+                        uri: 'https://images.pexels.com/photos/196652/pexels-photo-196652.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
+
+                    }}
+                    style={{width: '100%', height: 200, borderRadius: 10, overflow: 'hidden', marginTop: 10}}
+                >
+                    <View style={{backgroundColor: 'rgba(0,0,0,.5)', flex: 1, justifyContent: 'flex-end', padding: 10}}>
+                        <Text style={{color: '#fff', fontSize: 20, fontWeight: 'bold'}}>The future of work</Text>
+                        <Text style={{color: '#fff', fontSize: 16, fontWeight: 'normal'}}>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.</Text>
+                        </View>
+                </ImageBackground>
+                
             </View>
             <View style={{position: 'absolute',alignItems: 'center', bottom: 30, right: 30,}}>
                 {
@@ -112,7 +128,6 @@ export default function HomeScreen({navigation}) {
                             <Pressable onPress={()=>{navigation.navigate('NewLocation');setToggle(!toggle)}} android_ripple={{color:'#f5f5f5'}}  style={{backgroundColor: '#fff',marginBottom: 10, padding: 10}}>
                                 <Text>New Location</Text>
                             </Pressable>
-                            
                         </View>
                     ):null
                 }
