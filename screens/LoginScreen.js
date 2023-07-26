@@ -31,7 +31,6 @@ export default function LoginScreen({navigation}) {
         networkMode: 'offline',
     })
     const handleTextChange = (key,value) => {
-        console.log(key,value);
         setLoginData({
             ...loginData,
             [ key ]: value,

@@ -7,30 +7,34 @@ import { FlatList } from 'react-native-gesture-handler';
 import EventItemComponent from '../components/EventItem.component';
 const {width, height} = Dimensions.get('window');
 // import AnimatedLoader from 'react-native-animated-loader'
-export default function SpeakerProfile({route}) {
+export default function SpeakerProfile({route, navigation}) {
     const { speakerId } = route.params;
     const { isLoading, data } = useQuery({
         queryKey: ['speaker', speakerId],
         queryFn: async () =>{
-            const response = await fetch(`http://localhost:3000/speakers/${speakerId}`);
+            const response = await fetch(`http://192.168.88.251:3001/speakers/${speakerId}`);
             const data = await response.json();
-            return data.results[0];
+            console.log('====================================');
+            console.log(data);
+            console.log('====================================');
+            return data;
         },
         networkMode: 'always',
     });
-    console.log(data);
+    navigation.setOptions({
+        header: ()=>(
+            <View style={{flexDirection: 'row', alignItems: 'center',marginTop: 50, justifyContent: 'space-between', }}>
+                <Icon name="chevron-left" size={30} color="#262739" onPress={()=>navigation.goBack()} />
+                <Text style={{fontSize: 18,  color: '#262739'}}>PROFILE</Text>
+                <Text></Text>
+            </View>
+        ),
+    });
+    console.log('Speaker found is',speakerId,data);
     if (isLoading){
         return (
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                <AnimatedLoader
-                    visible={true}
-                    overlayColor="rgba(255,255,255,0.75)"
-                    animationStyle={{width: 100, height: 100}}
-                    speed={1}
-                    
-                >
                     <Text>Loadiing..</Text>
-                </AnimatedLoader>
             </View>
         )
     }
@@ -41,32 +45,32 @@ export default function SpeakerProfile({route}) {
                 <Image
                     style={{height: 100, width: 100,borderRadius: 50 }}
                     source={{
-                        uri: 'https://reactnative.dev/img/tiny_logo.png',
+                        uri: data.imageUrl,
                     }}
                 />
                 <View style={{paddingHorizontal: 10}}>
                     <View style={{marginVertical: 10}}>
-                        <Text style={{alignSelf: 'center'}}>{data.name}</Text>
-                        <Text style={styles.boldText}>{data.role}</Text>
+                        <Text style={styles.boldText}>{data.name}</Text>
+                        <Text style={{alignSelf: 'center'}}>{data.role}</Text>
                         <Text>{data.description}</Text>
                         <View style={{flexDirection: 'row', alignItems: 'center'}}>
                             <Pressable android_ripple={{color:'#f5f5f5'}}  style={styles.butttonStyle}>
                                 <Text style={{color: 'white'}}>FOLLOW</Text>
                             </Pressable>
                             <Pressable android_ripple={{color:'#f5f5f5'}}  style={styles.messageButtonStyle}>
-                                <Text style={{color: 'white'}}>MESSAGE</Text>
+                                <Text style={{color: 'black'}}>MESSAGE</Text>
                             </Pressable>
                         </View>
                     </View>
                 </View>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View style={{flexDirection: 'row',paddingHorizontal: 10, alignItems: 'center', width: '100%', justifyContent: 'space-between'}}>
                     <Text style={styles.boldText}>Events</Text>
                     <Pressable android_ripple={{color: '#f5f5f5'}}>
                         <Text style={{color: CONSTS.PRIMARY_COLOR}}>Show All</Text>
                     </Pressable>
                 </View>
                 <FlatList
-                    data={data.events}
+                    data={data.event}
                     renderItem={({item}) => (
                         <EventItemComponent
                             date={item.date}
@@ -138,15 +142,17 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         alignItems: 'center',
         backgroundColor: '#4285f4',
-        width: width *.5,
+        width: width *.3,
+        marginHorizontal: 15,
+
     },
     messageButtonStyle:{
         borderRadius: 20,
         paddingVertical: 10,
         alignItems: 'center',
-        borderWidth: 1,
-        backgroundColor: '#4285f4',
-        width: width *.5,
+        borderWidth: 2,
+        width: width *.3,
+        marginHorizontal: 15,
     },
     signInOptionIcon:{backgroundColor:'#fff', borderRadius: 15, padding:5, marginHorizontal:5}
 });
