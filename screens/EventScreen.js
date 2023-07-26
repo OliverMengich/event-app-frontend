@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useLayoutEffect,} from 'react';
-import { StyleSheet,SafeAreaView, Image, Text, View, Dimensions, Pressable, ImageBackground } from 'react-native';
+import { StyleSheet,SafeAreaView,ScrollView, Image, Text, View, Dimensions, Pressable, ImageBackground, FlatList } from 'react-native';
 import Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { EVENTS } from './FavouritesScreen';
 const monthNames = ["January", "February", "March", "April", "May", "June",
@@ -14,8 +14,13 @@ export default function EventScreen({route, navigation}) {
     const events = queryClient.getQueryData(['events']);
     const event = events.find((ev)=>ev.id===eventId)
     const date = new Date(event.date);
+    console.log(event);
+    const func = (id)=>{
+        navigation.navigate('SpeakerProfile',{
+            speakerId: id,
+        });
+    }
     useLayoutEffect(() => {
-        const event = EVENTS.find((ev)=>ev.id===eventId)
         navigation.setOptions({
             header: ()=> (
                 <View >
@@ -44,12 +49,12 @@ export default function EventScreen({route, navigation}) {
     }, [navigation]);
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar  style='auto' />
+            <StatusBar  style='light' />
             <View style={{ width: '100%'}}>
                 <View style={{alignItems:'flex-start',paddingHorizontal: 10}}>
                     <View style={{marginVertical: 10}}>
                         <Text >Event Title</Text>
-                        <Text style={styles.boldText}>{event.title}</Text>
+                        <Text style={styles.boldText}>{event.name}</Text>
                     </View>
                     <View style={styles.row}>
                         <View>
@@ -62,7 +67,7 @@ export default function EventScreen({route, navigation}) {
                         <View>
                             <Text style={styles.normalText}>Time</Text>
                             <View style={styles.timContainer}>
-                                <Text style={styles.timeText}>{date.getHours()+':'+date.getMinutes()}</Text>
+                                <Text style={styles.timeText}>{date.getHours()+':'+date.getUTCMinutes()}</Text>
                                 <Icon size={20} name="clock-outline" />
                             </View>
                         </View>
@@ -75,33 +80,28 @@ export default function EventScreen({route, navigation}) {
                     </View>
                     <View>
                         <Text style={styles.boldText}>Speakers</Text>
-                        <View style={{flexDirection: 'row', alignItems: 'center',}}>
-                            <View style={{backgroundColor: '#fff', margin: 10,}}>
-                                <Image
-                                    style={{height: 100, width: 100, }}
-                                    source={{
-                                        uri: 'https://reactnative.dev/img/tiny_logo.png',
-                                    }}
-                                />
-                                <Text>Jane Does</Text>
-                                <Text>Speaker</Text>
-                            </View>
-                            <View style={{backgroundColor: '#fff', margin: 10,}}>
-                                <Image
-                                    style={{height: 100, width: 100, }}
-                                    source={{
-                                        uri: 'https://reactnative.dev/img/tiny_logo.png',
-                                    }}
-                                />
-                                <Text>Jane Does</Text>
-                                <Text>Speaker</Text>
-                            </View>
-                        </View>
+                        {/* <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+                            {
+                                event.speakers?.map((speaker)=>(
+                                    <Pressable onPress={()=>func(speaker.id)} style={{backgroundColor: '#fff', margin: 10,}}>
+                                    <Image
+                                        style={{height: 100, width: 100, }}
+                                        source={{
+                                            uri: speaker.image,
+                                        }}
+                                    />
+                                    <Text>{speaker.name}</Text>
+                                    <Text>Speaker</Text>
+                                </Pressable>
+                                ))
+                            }
+                        </ScrollView> */}
+                        
                     </View>
                     <View>
                         <Text style={styles.boldText}>Location</Text>
                         <Text>
-                            {event.location}
+                            Dedan Kimathi University of Technology
                         </Text>
                     </View>
                     <View>
@@ -232,6 +232,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         width: width*.5,
         alignItems: 'center',
-        borderRadius: 10,
+        borderRadius: 25,
     }
 });
