@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet,SafeAreaView, Image, Text, View, Pressable, TextInput } from 'react-native';
+import { StyleSheet,SafeAreaView,PermissionsAndroid, Image, Text, View, Pressable, TextInput, Platform } from 'react-native';
 import Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useState } from 'react';
 import { useQueryClient,useMutation } from '@tanstack/react-query';
@@ -38,9 +38,7 @@ export default function NewLocationScreen({navigation}) {
     const user = queryClient.getQueryData(['user']);
     console.log('speakers',speakers, user);
     // console.log('newLocation',data);
-    function handleNewEvent(){
-        newEvent.mutate(formData);
-    }
+    
     const formData = new FormData();
     formData.append('name', newLocation.name);
     formData.append('date', newLocation.date);
@@ -51,11 +49,29 @@ export default function NewLocationScreen({navigation}) {
         name: 'image.jpg',
         type: 'image/jpeg',
     });
+    function handleNewEvent(){
+        newEvent.mutate(formData);
+    }
     console.log('formData is: ',formData);
     const newEvent= useMutation({
         mutationFn: async (newLocation) => {
             console.log('newLocation',newLocation);
-            axios.post(`${CONSTS.BACKEND_URL}/new-location`,{...newLocation},{
+            if (Platform.OS==='android') {
+                const granted = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+                    {
+                        title: 'Storage Permission Required',
+                        message:
+                            'App needs access to your storage to download Photos',
+                        buttonPositive: 'OK',
+                    },
+                );
+                if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+                    console.log('Permission Denied');
+                    return;
+                }
+            }
+            axios.post(`${CONSTS.BACKEND_URL}/new-location`,newLocation,{
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${user.access_token}`,

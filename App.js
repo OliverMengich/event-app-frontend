@@ -15,6 +15,7 @@ import ProfileScreen from './screens/ProfileScreen';
 import SpeakerProfile from './screens/SpeakerProfile';
 import NewEventScreen from './screens/NewEventScreen';
 import NewLocationScreen from './screens/NewLocationScreen';
+import NotificationsScreen from './screens/NotificationsScreen';
 import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator()
@@ -28,8 +29,6 @@ function CustomDrawerContainer(props){
     const handleNavigation = ()=>{
         props.navigation.navigate('Profile')
     }
-    console.log('Props.data: ', props.data.name)
-    console.log(JSON.stringify(props.data).name)
     const {name,role, image} = (props.data);
     return(
         <DrawerContentScrollView contentContainerStyle={styles.viewNest} {...props}>
@@ -71,8 +70,8 @@ function CustomDrawerContainer(props){
         </DrawerContentScrollView>
     )
 }
-function DrawerNavigator({route}){
-    console.log('router parameters are: ',route.params)
+function DrawerNavigator({route, navigation}){
+    const totalNotifications = route.params.notifications.length;
     return(
         <Drawer.Navigator
             screenOptions={{
@@ -93,12 +92,18 @@ function DrawerNavigator({route}){
                     headerRight: ()=>(
                         <View style={{flexDirection: 'row', marginRight: 10}}>
                             <Icon size={25} name="cart-variant" />
-                            <View style={{marginLeft: 5}}>
-                                <Icon size={25} name="bell-outline" />
-                                <View style={{position:'absolute', top: -5, right: -5, backgroundColor: 'red', borderRadius: 10, width: 20, height: 20, alignItems:'center', justifyContent:'center'}}>
-                                    <Text style={{color:'#fff', fontSize: 10}}>2</Text>
+                            <Pressable onPress={()=>{navigation.navigate('Notification')}}>
+                                <View style={{marginLeft: 5}}>
+                                    <Icon size={25} name="bell-outline" />
+                                    {
+                                        totalNotifications >0 &&(
+                                            <View style={{position:'absolute', top: -5, right: -5, backgroundColor: 'red', borderRadius: 10, width: 20, height: 20, alignItems:'center', justifyContent:'center'}}>
+                                                <Text style={{color:'#fff',fontWeight: 'bold', fontSize: 10}}>{totalNotifications }</Text>
+                                            </View>
+                                        )
+                                    }
                                 </View>
-                            </View>
+                            </Pressable>
                         </View>
                     ),
                     drawerIcon:()=>(<Icon size={25} name="home-outline" />),
@@ -117,9 +122,13 @@ function DrawerNavigator({route}){
                         <View style={{marginRight: 10}}> 
                             <View style={{marginLeft: 5}}>
                                 <Icon size={25} name="bell-outline" />
-                                <View style={{position:'absolute', top: -5, right: -5, backgroundColor: 'red', borderRadius: 10, width: 20, height: 20, alignItems:'center', justifyContent:'center'}}>
-                                    <Text style={{color:'#fff', fontSize: 10}}>2</Text>
-                                </View>
+                                {
+                                    totalNotifications >0 &&(
+                                        <View style={{position:'absolute', top: -5, right: -5, backgroundColor: 'red', borderRadius: 10, width: 20, height: 20, alignItems:'center', justifyContent:'center'}}>
+                                            <Text style={{color:'#fff',fontWeight: 'bold', fontSize: 10}}>{totalNotifications }</Text>
+                                        </View>
+                                    )
+                                }
                             </View>
                         </View>
                     ),
@@ -139,9 +148,13 @@ function DrawerNavigator({route}){
                         <View style={{marginRight: 10}}> 
                             <View style={{marginLeft: 5}}>
                                 <Icon size={25} name="bell-outline" />
-                                <View style={{position:'absolute', top: -5, right: -5, backgroundColor: 'red', borderRadius: 10, width: 20, height: 20, alignItems:'center', justifyContent:'center'}}>
-                                    <Text style={{color:'#fff', fontSize: 10}}>2</Text>
-                                </View>
+                                {
+                                    totalNotifications >0 &&(
+                                        <View style={{position:'absolute', top: -5, right: -5, backgroundColor: 'red', borderRadius: 10, width: 20, height: 20, alignItems:'center', justifyContent:'center'}}>
+                                            <Text style={{color:'#fff',fontWeight: 'bold', fontSize: 10}}>{totalNotifications }</Text>
+                                        </View>
+                                    )
+                                }
                             </View>
                         </View>
                     ),
@@ -236,6 +249,17 @@ export default function App() {
                                     },
                                     headerLeft: ()=>(<Icon size={25} name="chevron-left" />),
                                     title: '',
+                                }}
+                            />
+                            <Stack.Screen
+                                name='Notification'
+                                component={NotificationsScreen}
+                                options={{
+                                    headerStyle:{
+                                        backgroundColor: '#f9f7f8',
+                                    },
+                                    headerLeft: ()=>(<Icon size={25} name="chevron-left" />),
+                                    title: 'Notifications',
                                 }}
                             />
                     </Stack.Navigator>

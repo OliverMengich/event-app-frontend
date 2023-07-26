@@ -1,4 +1,4 @@
 export const CONSTS = {
-    BACKEND_URL: 'http://192.168.1.107:3000',
+    BACKEND_URL: 'http://192.168.88.237:3001',
     PRIMARY_COLOR: '#4285f4',
 }

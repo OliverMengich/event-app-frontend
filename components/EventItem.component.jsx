@@ -7,7 +7,7 @@ const monthNames = ["January", "February", "March", "April", "May", "June",
 import {EVENTS} from '../screens/FavouritesScreen'
 function EventItemComponent({handleNavigation,date, ...otherProps}) {
     const {title, description, location, price, id,favourite, image,} = otherProps;
-    console.log('Date is',date)
+    console.log('Date is', image)
     function handleFavorite(){
         // setIsPressed(!isPressed); 
         const event = EVENTS.find((e)=>e.id===id);
@@ -20,7 +20,7 @@ function EventItemComponent({handleNavigation,date, ...otherProps}) {
             <Pressable onPress={handleNavigation} android_ripple={{color: '#f5f5f5'}} style={{}}>
             <View style={{position:'relative'}}>
                 <Image
-                    style={{height: 150, width: '100%',borderTopLeftRadius: 10, borderTopRightRadius: 10}}
+                    style={{height: 180, width: '100%',borderTopLeftRadius: 10, borderTopRightRadius: 10}}
                     source={{
                         uri: image,
                     }}
@@ -31,7 +31,7 @@ function EventItemComponent({handleNavigation,date, ...otherProps}) {
                     </Pressable>
                 </View>
             </View>
-            <View style={{padding: 10}}>
+            <View style={{paddingHorizontal: 10}}>
                 <Text style={styles.normalText}>{eventDate.getDate()+'th '+monthNames[eventDate.getMonth()]+' '+eventDate.getFullYear()}</Text>
                 <Text style={styles.boldText}>{title}</Text>
                 <View style={{flexDirection: 'row',alignItems: 'center',}}>
@@ -60,9 +60,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 10,
         marginVertical: 10,
-        // width: '50%',
+        width: 220,
         // padding: 10,
-        marginHorizontal: 5
+        marginHorizontal: 5,
+        height: 300,
     },
     boldText:{
         fontWeight: 'bold',
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
     normalText:{
         fontWeight: 'normal',
         fontSize: 16,
-        marginVertical: 5,
+        // marginVertical: 5,
         color: '#262739'
     },
     butttonStyle:{

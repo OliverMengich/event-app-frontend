@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet,SafeAreaView, Image,Dimensions, Text, View, Pressable, TextInput } from 'react-native';
+import { StyleSheet,SafeAreaView,PermissionsAndroid,Platform, Image,Dimensions, Text, View, Pressable, TextInput } from 'react-native';
 import Icon  from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useState } from 'react';
 import { useQueryClient,useMutation } from '@tanstack/react-query';
@@ -8,6 +8,9 @@ import { CONSTS } from '../constants';
 import * as DocumentPicker from 'expo-document-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 const { width, height } = Dimensions.get('window');
+import * as MediaLibrary from 'expo-media-library';
+import * as FileSystem from 'expo-file-system'
+import * as ImagePicker from 'expo-image-picker';
 export default function NewEventScreen({navigation}) {
     function handleNavigation(){
         navigation.goBack();
@@ -32,44 +35,49 @@ export default function NewEventScreen({navigation}) {
         console.log(key,value);
         setNewEventData({
             ...newEventData,
-            [ key ]: value,
+            [ key ]: key==='ticketPrice'? parseFloat(value): value,
         });
     }
     const queryClient = useQueryClient();
     const speakers = queryClient.getQueryData(['speakers']);
-    const user = queryClient.getQueryData(['user']);
-    console.log('speakers',speakers, user);
-    // console.log('newEventData',data);
-    function handleNewEvent(){
-        newEvent.mutate(formData);
+    let user = undefined;
+    user = queryClient.getQueryData(['user']);
+    if (user===undefined) {
+        user = queryClient.getQueryData(['register']);
     }
-    const formData = new FormData();
-    formData.append('name', newEventData.name);
-    formData.append('date', newEventData.date);
-    formData.append('ticketPrice', newEventData.ticketPrice);
-    formData.append('speaker', newEventData.speaker);
-    formData.append('file',{
-        uri: newEventData.poster,
-        name: 'image.jpg',
-        type: 'image/jpeg',
-    });
-    console.log('formData is: ',formData);
+    function handleNewEvent(){
+        newEvent.mutate(newEventData);
+    }
+    console.log('Logged in user is: ',user);
     const newEvent= useMutation({
         mutationFn: async (newEventData) => {
-            console.log('newEventData',newEventData);
-            axios.post(`${CONSTS.BACKEND_URL}/new-event`,{...newEventData},{
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${user.access_token}`,
+            try {
+                const formData = new FormData();
+                if (newEventData.speakerId.length <=0) {
+                    delete newEventData.speakerId;
                 }
-            })
-            .then((res)=>{
-                console.log('res',res);
-            })
-            .catch((err)=>{
-                console.log('Error encountered',err)
-            });
-        },
+                console.log('newEventData',newEventData);
+                formData.append('request', JSON.stringify(newEventData))
+                formData.append('file',{
+                    uri: newEventData.poster,
+                    name: 'image.jpg',
+                    type: 'image/jpeg',
+                });
+                const response = await fetch('http://192.168.88.237:3001/new-event', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: 'Bearer ' + user.access_token,
+                    },
+                    body: formData,
+                });
+          
+              const responseData = await response.json();
+              console.log('response', responseData);
+            } catch (error) {
+              console.error('Error sending file:', error);
+            }
+          },
         onSuccess: (data) => {
             console.log('data',data);
             queryClient.invalidateQueries({queryKey: ['events']});
@@ -90,6 +98,18 @@ export default function NewEventScreen({navigation}) {
                 poster: res.uri,
             });
         });
+    }
+    async function selectImage (){
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        });
+        if(!result.canceled){
+            console.log(result)
+            setNewEventData({
+                ...newEventData,
+                poster: result.assets.uri,
+            });
+        }
     }
     return (
         <SafeAreaView style={styles.container}>
@@ -130,7 +150,7 @@ export default function NewEventScreen({navigation}) {
                 </View>
                 <View style={{width:'100%'}}>
                     <Text>Event Poster</Text>
-                    <Pressable onPress={handleChooseFile} style={styles.buttonStyle}>
+                    <Pressable onPress={selectImage} style={styles.buttonStyle}>
                         <Text style={styles.textcolor}>Choose File</Text>
                     </Pressable>
                 </View>
@@ -140,7 +160,7 @@ export default function NewEventScreen({navigation}) {
                         keyboardType='numeric'
                         style={styles.textInputStyle} 
                         placeholder='Enter Price, 0 for free'
-                        onChangeText={(text)=>handleTextChange('ticketPrice',text)} 
+                        onChangeText={(text)=>handleTextChange('ticketPrice',parseFloat(text))} 
                     />
                 </View>
                 
