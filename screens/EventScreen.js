@@ -7,14 +7,15 @@ const monthNames = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"
 ];
 const {width, height} = Dimensions.get('window');
-
+import { useQueryClient } from '@tanstack/react-query';
 export default function EventScreen({route, navigation}) {
+    const queryClient = useQueryClient();
     const eventId = route.params.eventId;
-    const event = EVENTS.find((ev)=>ev.id===eventId)
+    const events = queryClient.getQueryData(['events']);
+    const event = events.find((ev)=>ev.id===eventId)
     const date = new Date(event.date);
     useLayoutEffect(() => {
         const event = EVENTS.find((ev)=>ev.id===eventId)
-        console.log('Event ID is: ',event);
         navigation.setOptions({
             header: ()=> (
                 <View >
@@ -43,7 +44,7 @@ export default function EventScreen({route, navigation}) {
     }, [navigation]);
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar  style='light' />
+            <StatusBar  style='auto' />
             <View style={{ width: '100%'}}>
                 <View style={{alignItems:'flex-start',paddingHorizontal: 10}}>
                     <View style={{marginVertical: 10}}>
