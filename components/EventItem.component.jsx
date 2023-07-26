@@ -7,14 +7,14 @@ const monthNames = ["January", "February", "March", "April", "May", "June",
 import {EVENTS} from '../screens/FavouritesScreen'
 function EventItemComponent({handleNavigation,date, ...otherProps}) {
     const {title, description, location, price, id,favourite, image,} = otherProps;
-    
+    console.log('Date is',date)
     function handleFavorite(){
         // setIsPressed(!isPressed); 
         const event = EVENTS.find((e)=>e.id===id);
         event.favourite= !event.favourite
         console.log(event);
     }
-    
+    const eventDate = new Date(date);
     return (
         <View style={styles.rowItem}>
             <Pressable onPress={handleNavigation} android_ripple={{color: '#f5f5f5'}} style={{}}>
@@ -32,13 +32,13 @@ function EventItemComponent({handleNavigation,date, ...otherProps}) {
                 </View>
             </View>
             <View style={{padding: 10}}>
-                <Text style={styles.normalText}>{date.getDate()+'th '+monthNames[date.getMonth()]+' '+date.getFullYear()}</Text>
+                <Text style={styles.normalText}>{eventDate.getDate()+'th '+monthNames[eventDate.getMonth()]+' '+eventDate.getFullYear()}</Text>
                 <Text style={styles.boldText}>{title}</Text>
                 <View style={{flexDirection: 'row',alignItems: 'center',}}>
                     <Icon size={20} name="map-marker-outline" />
                     <Text style={styles.normalText}>{location}</Text>
                 </View>
-                <Text style={styles.normalText}>{description.slice(0,22)}...</Text>
+                <Text style={styles.normalText}>{ description? description.slice(0,22):''}...</Text>
                 <View style={styles.row}>
                     <Text >Price: {price}</Text>
                     <Pressable android_ripple={{color:'#f5f5f5'}}  style={styles.butttonStyle}>

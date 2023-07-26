@@ -14,11 +14,13 @@ function SpeakerComponent({name,id, jobTitle, image, navigation}) {
                 }} 
                 style={styles.imageStyle}
             />
-            <Text style={styles.boldText}>{name}</Text>
-            <Text style={styles.normalText}>{jobTitle}</Text>
-            <Pressable onPress={handlePress} android_ripple={{color:'#f5f5f5'}} style={styles.buttonStyle}>
-                <Text style={{color: '#fff'}}>View</Text>
-            </Pressable>
+            <View style={{paddingHorizontal: 10, marginVertical: 1}}>
+                <Text style={styles.boldText}>{name}</Text>
+                <Text style={styles.normalText}>{jobTitle}</Text>
+                <Pressable onPress={handlePress} android_ripple={{color:'#f5f5f5'}} style={styles.buttonStyle}>
+                    <Text style={{color: '#fff'}}>View</Text>
+                </Pressable>
+            </View>
         </View>
     );
 }
@@ -28,7 +30,7 @@ const styles = StyleSheet.create({
         width: '100%',
         marginHorizontal:5, 
         borderRadius: 7,
-        padding:16, 
+        // , 
         alignItems: 'center'
     },
     boldText:{
@@ -38,19 +40,21 @@ const styles = StyleSheet.create({
     normalText:{
         fontSize: 12,
         color: '#666',
-        marginBottom: 10,
+        // marginBottom: 10,
     },
     imageStyle:{
-        width: 60, 
-        height: 60, 
-        borderRadius: 20
+        width: '100%', 
+        height: 100, 
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
     },
     buttonStyle:{
         backgroundColor: '#4285f4', 
-        width: '100%', 
+        width: 100, 
         alignItems:'center',
-        marginVertical: 10, 
-        paddingVertical: 10
+        marginBottom: 10, 
+        padding: 10,
+        borderRadius: 20
     },
 });
 
