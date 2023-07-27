@@ -9,8 +9,16 @@ function FavouritesScreen({navigation}) {
         })
     }
     const queryClient = useQueryClient();
-    const user = queryClient.getQueryData(['user']);
-    console.log('User',user.favourites);
+    let user;
+    user = queryClient.getQueryData(['user']);
+    if (!user) {
+        console.log('User not present')
+        user = queryClient.getQueryData(['register']);
+        console.log('====================================');
+        console.log(user);
+        console.log('====================================');
+    }
+    console.log('User',user);
     const favouriteEvents = user.favourites;
 
     return (
