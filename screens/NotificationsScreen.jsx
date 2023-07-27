@@ -35,7 +35,7 @@ function NotificationsScreen({navigation, route}) {
                 renderItem={({item}) => (
                         <View>
                             <Pressable android_ripple={{color: '#f5f5f5'}} style={styles.notificationItem}>
-                                <View style={[styles.isReadIcon,true? {backgroundColor: '#3867fa',} : {backgroundColor: '#ccc'}]}>
+                                <View style={[styles.isReadIcon,item.isRead? {backgroundColor: '#ccc',} : {backgroundColor: '#3867fa'}]}>
                                 </View>
                                 <View style={{flexDirection: 'row', width: '90%',alignItems: 'center', justifyContent:'space-between'}}>
                                     <View>
