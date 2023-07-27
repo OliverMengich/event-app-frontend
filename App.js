@@ -16,6 +16,7 @@ import SpeakerProfile from './screens/SpeakerProfile';
 import NewEventScreen from './screens/NewEventScreen';
 import NewLocationScreen from './screens/NewLocationScreen';
 import NotificationsScreen from './screens/NotificationsScreen';
+import UserSettingScreen from './screens/UserSettingScreen';
 import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator()
@@ -29,23 +30,23 @@ function CustomDrawerContainer(props){
     const handleNavigation = ()=>{
         props.navigation.navigate('Profile')
     }
-    const {name,role, image} = (props.data);
+    const {name,role, imageUrl} = (props.data);
     return(
         <DrawerContentScrollView contentContainerStyle={styles.viewNest} {...props}>
             <View style={{alignItems:'center',  borderBottomWidth: 1}}>
                 <View style={{flexDirection:'row', alignItems:'center'}}>
                     <Image 
                         source={{
-                            uri: image
+                            uri: imageUrl
                         }}
                         style={styles.imageStyle}
                     />
-                    <View>
+                    <View style={{marginHorizontal: 10,}}>
                         <Text style={{color:'#000',fontWeight:'bold', fontSize: 18}}>{capitalizeFirstLetter(name)}</Text>
-                        <Text style={{color:'blue', fontSize: 15}}>{role}</Text>
+                        <Text style={{color:'white',borderRadius: 15,marginVertical: 10, fontWeight:'bold', fontSize: 15,padding: 5, backgroundColor: '#4285f4', textAlign: 'center'}}>{capitalizeFirstLetter(role)}</Text>
                     </View>
                 </View>
-                <View style={{flexDirection: 'row',marginVertical:10}}>
+                <View style={{flexDirection: 'row',marginVertical: 15}}>
                     <View style={{marginHorizontal: 8}}>
                         <Icon size={25} name="wechat" style={styles.signInOptionIcon} color={'#4285f4'} />
                         <Text style={{color:'#000', fontSize: 11}}>Chat</Text>
@@ -229,6 +230,17 @@ export default function App() {
                                 component={SpeakerProfile}
                             />
                             <Stack.Screen
+                                name='UserSettingScreen'
+                                component={UserSettingScreen}
+                                options={{
+                                    headerStyle:{
+                                        backgroundColor: '#f9f7f8',
+                                    },
+                                    headerLeft: ()=>(<Icon size={25} name="chevron-left" />),
+                                    title: 'Settings',
+                                }}
+                            />
+                            <Stack.Screen
                                 name='NewEvent'
                                 component={NewEventScreen}
                                 options={{
@@ -289,8 +301,8 @@ const styles = StyleSheet.create({
         marginHorizontal:5
     },
     imageStyle: {
-        width: 60, 
-        height: 60, 
-        borderRadius: 20
+        width: 90, 
+        height: 90, 
+        borderRadius: 45,
     }
 });
