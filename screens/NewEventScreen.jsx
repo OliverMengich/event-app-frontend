@@ -21,6 +21,7 @@ export default function NewEventScreen({navigation}) {
         ticketPrice: 0,
         speakerId: '',
         poster: '',
+        description: '',
     });
     navigation.setOptions({
         headerLeft: () => (
@@ -48,22 +49,27 @@ export default function NewEventScreen({navigation}) {
     function handleNewEvent(){
         newEvent.mutate(newEventData);
     }
-    console.log('Logged in user is: ',user);
+    // console.log('Logged in user is: ',user);
     const newEvent= useMutation({
         mutationFn: async (newEventData) => {
             try {
+                console.log('New newEventData: ',newEventData);
                 const formData = new FormData();
-                if (newEventData.speakerId.length <=0) {
-                    delete newEventData.speakerId;
-                }
-                console.log('newEventData',newEventData);
-                formData.append('request', JSON.stringify(newEventData))
-                formData.append('file',{
+                
+                formData.append('poster',{
                     uri: newEventData.poster,
-                    name: 'image.jpg',
+                    name: newEventData.poster.split('/').pop(),
                     type: 'image/jpeg',
                 });
-                const response = await fetch('http://192.168.88.237:3001/new-event', {
+                const newObj = {
+                    name: newEventData.name,
+                    date: newEventData.date,
+                    ticketPrice: newEventData.ticketPrice,
+                    description: newEventData.description,
+                }
+                formData.append('request', JSON.stringify(newObj))
+                
+                const response = await fetch(CONSTS.BACKEND_URL + '/new-event', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'multipart/form-data',
@@ -71,9 +77,9 @@ export default function NewEventScreen({navigation}) {
                     },
                     body: formData,
                 });
-          
-              const responseData = await response.json();
-              console.log('response', responseData);
+                const response4 = await response.json();
+                console.log('Response for upload',response4);
+                
             } catch (error) {
               console.error('Error sending file:', error);
             }
@@ -81,7 +87,7 @@ export default function NewEventScreen({navigation}) {
         onSuccess: (data) => {
             console.log('data',data);
             queryClient.invalidateQueries({queryKey: ['events']});
-            // navigation.navigate('Events');
+            navigation.navigate('Events');
         },
         onError: (error) => {
             console.log('error',error.message);
@@ -99,21 +105,26 @@ export default function NewEventScreen({navigation}) {
             });
         });
     }
-    async function selectImage (){
-        const result = await ImagePicker.launchImageLibraryAsync({
+    function selectImage (){
+        ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        });
-        if(!result.canceled){
-            console.log(result)
-            setNewEventData({
-                ...newEventData,
-                poster: result.assets.uri,
-            });
-        }
+            allowsEditing: true,
+            aspect: [1,1],
+            quality: 1,
+        })
+        .then((result)=>{
+            if(!result.canceled){
+                console.log(result.assets[0].uri,'is assets')
+                setNewEventData({
+                    ...newEventData,
+                    poster: result.assets[0].uri,
+                });
+            }
+        })
     }
     return (
         <SafeAreaView style={styles.container}>
-            <StatusBar  style='auto' />
+            <StatusBar style='auto' />
             <Text style={styles.boldText}>Create An event</Text>
             <View style={{width: '100%', alignItems:'center'}}>
                 <View style={{width:'100%'}}>
@@ -138,6 +149,21 @@ export default function NewEventScreen({navigation}) {
                             {newEventData.date ? new Date(newEventData.date).toDateString() : 'Select Date'}
                         </Text>
                     </Pressable>
+                </View>
+                <View style={{width:'100%'}}>
+                    <Text>Description</Text>
+                    <DateTimePickerModal
+                        isVisible={isDatePickerVisible}
+                        mode='date'
+                        onConfirm={(date)=>handleTextChange('date',date)}
+                        onCancel={()=>handleTextChange('date','')}
+                    />
+                    <TextInput 
+                        style={styles.textInputStyle} 
+                        placeholder='Event Description'
+                        keyboardType='visible-password'
+                        onChangeText={(text)=>handleTextChange('description',text)} 
+                    />
                 </View>
                 <View style={{width:'100%'}}>
                     <Text>Speaker (Optional)</Text>
@@ -179,7 +205,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#f9f7f8',
         paddingHorizontal:10,
-        marginTop: height*0.2,
+        marginTop: height*0.1,
     },
     textInputStyle: {
         height: 40,
